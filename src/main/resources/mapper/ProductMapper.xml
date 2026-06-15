@@ -46,9 +46,21 @@
         SELECT COUNT(1) FROM product WHERE id = #{id}
     </select>
 
-    <!--
-        TODO #1: findByCategory
-        TODO #6: findByIdIn / bulkUpdatePrice
-    -->
+<!--        TODO #1: findByCategory-->
+    <select id="findByCategory" resultMap="ProductResultMap">
+        SELECT id, name, description, price, stock_quantity, category
+        FROM product
+        WHERE category = #{category}
+    </select>
+
+<!--        TODO #6: findByIdIn / bulkUpdatePrice-->
+    <select id="findByIdIn" resultMap="ProductResultMap">
+        SELECT id, name, description, price, stock_quantity, category
+        FROM product
+        WHERE id in
+        <foreach collection="ids" open="("  item="id" separator=" ," close=")">
+            #{id}
+        </foreach>
+    </select>
 
 </mapper>

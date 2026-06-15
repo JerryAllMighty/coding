@@ -30,10 +30,8 @@ public interface ProductMapper {
 
     boolean existsById(@Param("id") Long id);
 
-    // TODO #1: 카테고리로 제품 조회
-    //   List<Product> findByCategory(@Param("category") String category);
-    //
-    // TODO #6: 다건 조회 / 일괄 가격 업데이트
-    //   List<Product> findByIdIn(@Param("ids") List<Long> ids);
+    List<Product> findByCategory(@Param("category") String category);
+
+       List<Product> findByIdIn(@Param("ids") List<Long> ids);
     //   int bulkUpdatePrice(...);
 }
