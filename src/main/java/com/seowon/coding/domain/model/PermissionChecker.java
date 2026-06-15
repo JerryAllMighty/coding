@@ -3,9 +3,12 @@ package com.seowon.coding.domain.model;
 
 import lombok.Builder;
 
+import java.util.HashMap;
 import java.util.List;
 
 class PermissionChecker {
+
+    HashMap<String, User> userIdMap = new HashMap<>();
 
     /**
      * TODO #7: 코드를 최적화하세요
@@ -19,6 +22,10 @@ class PermissionChecker {
             List<UserGroup> groups,
             List<Policy> policies
     ) {
+
+
+//        User user = new User(userId, )
+
         for (User user : users) {
             if (user.id.equals(userId)) {
                 for (String groupId : user.groupIds) {
@@ -29,7 +36,7 @@ class PermissionChecker {
                                     if (policy.id.equals(policyId)) {
                                         for (Statement statement : policy.statements) {
                                             if (statement.actions.contains(targetAction) &&
-                                                statement.resources.contains(targetResource)) {
+                                                    statement.resources.contains(targetResource)) {
                                                 return true;
                                             }
                                         }
