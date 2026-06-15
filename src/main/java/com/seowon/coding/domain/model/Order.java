@@ -18,61 +18,76 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String customerName;
-    
+
     private String customerEmail;
-    
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    
+
     private LocalDateTime orderDate;
-    
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
-    
+
     private BigDecimal totalAmount;
-    
+
+    //TODO #4 (리팩토링): Service 에 몰린 도메인 로직을 도메인 객체 안으로 이동
+    public static Order createOrder(String customerName,
+                                    String customerEmail) {
+        Order order = Order.builder()
+                .customerName(customerName)
+                .customerEmail(customerEmail)
+                .status(Order.OrderStatus.PENDING)
+                .orderDate(LocalDateTime.now())
+                .items(new ArrayList<>())
+                .totalAmount(BigDecimal.ZERO)
+                .build();
+
+        return order;
+    }
+
     // Business logic
     public void addItem(OrderItem item) {
         items.add(item);
         item.setOrder(this);
         recalculateTotalAmount();
     }
-    
+
     public void removeItem(OrderItem item) {
         items.remove(item);
         item.setOrder(null);
         recalculateTotalAmount();
     }
-    
+
     public void recalculateTotalAmount() {
         this.totalAmount = items.stream()
                 .map(OrderItem::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-    
+
     public void markAsProcessing() {
         this.status = OrderStatus.PROCESSING;
     }
-    
+
     public void markAsShipped() {
         this.status = OrderStatus.SHIPPED;
     }
-    
+
     public void markAsDelivered() {
         this.status = OrderStatus.DELIVERED;
     }
-    
+
     public void markAsCancelled() {
         this.status = OrderStatus.CANCELLED;
     }
-    
+
     public enum OrderStatus {
         PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
     }
